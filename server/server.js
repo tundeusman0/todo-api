@@ -42,7 +42,7 @@ app.delete('/todos/:id',(req,res)=>{
     let id = req.params.id
     !ObjectID.isValid(id) && res.status(404).send()
     Todo.findByIdAndDelete(id).then((todo)=>{
-        !todo? res.status(404).send(): res.status(200).send('deleted')
+        !todo? res.status(404).send(): res.status(200).send({todo})
     }).catch((e)=>res.status(404).send())
 })
 

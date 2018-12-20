@@ -28,7 +28,7 @@ describe('POST /todos',()=>{
             .expect((res)=>{
                 expect(res.body.text).toBe(text)
             })
-            .end((err,res)=>{
+            .end((err)=>{
                 err && done(err)
                 Todo.find({text}).then((todos)=>{
                     expect(todos.length).toBe(1)
@@ -97,6 +97,44 @@ describe('GET /todo/:id',()=>{
             .expect((res) => {
                 expect(res.body.todo).toBe()
             })
+            .end(done)
+    })
+})
+
+describe('DELETE /Todos/:id',()=>{
+    it('should delete todos with valid id',(done)=>{
+        let id = todos[0]._id.toHexString()
+        request(app)
+            .delete(`/todos/${id}`)
+            .expect(200)
+            .expect((res)=>{
+                expect(res.body.todo._id).toBe(id)
+            })
+            .end((err)=>{
+                err? done(err):
+                Todo.findById(id).then((doc)=>{
+                    expect(doc).toNotExist()
+                    done()
+                }).catch((e)=>done(e))
+
+            })
+    })
+
+    it('should return 404 for invalid delete id',(done)=>{
+        let id = new ObjectID()
+        request(app)
+            .delete(`/todos/${id}`)
+            .expect(404)
+            .expect((res)=>{
+                expect(res.body.todo).toBe()
+            })
+            .end(done)
+    })
+
+    it('should return 404 for non-object id',(done)=>{
+        request(app)
+            .delete('/todos/123')
+            .expect(404)
             .end(done)
     })
 })
