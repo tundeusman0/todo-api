@@ -2,6 +2,7 @@ const expect = require('expect')
 const request = require('supertest')
 const {ObjectID} = require('mongodb')
 
+
 const {app} = require('./../server')
 const {Todo} = require('./../models/todo')
 
@@ -17,7 +18,9 @@ const todos = [{
 }]
 
 beforeEach((done)=>{
-    Todo.deleteMany({}).then(()=>Todo.insertMany(todos)).then(()=>done())
+    Todo.deleteMany({}).then(()=>{
+        Todo.insertMany(todos);
+    }).then(()=>done())
 })
 
 describe('POST /todos',()=>{
