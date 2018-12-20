@@ -38,6 +38,14 @@ app.get('/todos/:id',(req,res)=>{
     }).catch((e)=>res.status(404).send())
 },(e)=>res.send(e))
 
+app.delete('/todos/:id',(req,res)=>{
+    let id = req.params.id
+    !ObjectID.isValid(id) && res.status(404).send()
+    Todo.findByIdAndDelete(id).then((todo)=>{
+        !todo? res.status(404).send(): res.status(200).send('deleted')
+    }).catch((e)=>res.status(404).send())
+})
+
 app.listen(port,()=>console.log(`connected to port ${port}`))
 
 module.exports = {app};
