@@ -138,3 +138,19 @@ describe('DELETE /Todos/:id',()=>{
             .end(done)
     })
 })
+
+// describe('PATCH /Todos/:id',()=>{
+//     it('should update with a valid id',(done)=>{
+//         let id = todos[1]._id.toHexString()
+//         request(app)
+//             .patch(`/todos/${id}`)
+//             .expect(200)
+//             .expect((res)=>{
+//                 expect(res.body.todos).toBe(id)
+//                 
+//             })
+//             .end((err)=>{
+//                  err? done(err):
+//             })
+//     })
+// })
