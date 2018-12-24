@@ -2,17 +2,19 @@
 
 const {SHA256} = require('crypto-js')
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
-let data = {
-    id:4
-}
 
-let token = jwt.sign(data,'123abc')
-console.log(token)
+// let data = {
+//     id:4
+// }
 
-let decorded = jwt.verify(token,'123abc')
-console.log(JSON.stringify(decorded.id).toString())
-console.log(data.id === decorded.id? 'data verified' : 'data bridged')
+// let token = jwt.sign(data,'123abc')
+// console.log(token)
+
+// let decorded = jwt.verify(token,'123abc')
+// console.log(JSON.stringify(decorded.id).toString())
+// console.log(data.id === decorded.id? 'data verified' : 'data bridged')
 
 
 
