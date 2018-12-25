@@ -62,6 +62,18 @@ UserSchema.statics.findByToken = function (token) {
         '_id':decorded._id,
         'tokens.token':token,
         'tokens.access':'auth'
+    })  
+}
+
+UserSchema.statics.findByCredentials = function (email,password) {
+    let User = this;
+    return User.findOne({email}).then((user)=>{
+        return !user ? Promise.reject():
+        new Promise((resolve,reject)=>{
+                bcrypt.compare(password, user.password,(err, res)=>{
+                    return res ? resolve(user):reject()
+            })
+        })
     })
     
 }
