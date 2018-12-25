@@ -222,7 +222,7 @@ describe('PATCH /Todos/:id',()=>{
                     expect(user).toExist()
                     expect(user.password).toNotBe(password)
                     done()
-                })
+                }).catch((e)=>done(e))
             })
         })
         it('should return validation errors if request is invalid',(done)=>{
@@ -250,6 +250,50 @@ describe('PATCH /Todos/:id',()=>{
             })
             .end(done)
 
+        })
+    })
+    describe('POST /users/login',()=>{
+        it('should login user and return auth token',(done)=>{
+            let email = users[1].email, password = users[1].password 
+            request(app)
+            .post('/users/login')
+            .send({email,password})
+            .expect(200)
+            .expect((res)=>{
+                expect(res.header['x-auth']).toExist()
+            })
+            .end((err)=>{
+                !err? done(err):
+                    User.findById(users[1]._id).then((user)=>{
+                        expect(user).toInclude({email})
+                        expect(user.tokens[0]).toInclude({
+                            access:'auth',
+                            token:res.header['x-auth']
+                        })
+                        done()
+                    }).catch((e)=>done(e))
+            })
+        })
+        it('should reject invalid login',(done)=>{
+            let email = users[1].email, password = users[0].password
+            request(app)
+                .post('/users/login')
+                .send({ email, password })
+                .expect(400)
+                .expect((res) => {
+                    expect(res.header['x-auth']).toNotExist()
+                })
+                .end((err) => {
+                    !err ? done(err) :
+                        User.findById(users[1]._id).then((user) => {
+                            expect(user).toNotInclude({ email })
+                            expect(user.tokens[0]).toNotInclude({
+                                access: 'auth',
+                                token: res.header['x-auth']
+                            })
+                            done()
+                        }).catch((e) => done(e))
+                })
         })
     })
 })
