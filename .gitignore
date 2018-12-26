@@ -1,3 +1,4 @@
 node_modules/
 play/
+server/config/config.json
 package-lock.json
