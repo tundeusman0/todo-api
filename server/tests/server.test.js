@@ -31,6 +31,7 @@ describe('POST /todos',()=>{
             })
     })
 
+
     it('should not set when bad data if created',(done)=>{
         request(app)
             .post('/todos')
@@ -180,7 +181,9 @@ describe('PATCH /Todos/:id',()=>{
                     }).catch((e) => done(e))
             })
     })
-    describe('GET /users/me', ()=>{
+})
+
+describe('GET /users/me', ()=>{
         it('should return user if authenticated',(done)=>{
             request(app)
             .get('/users/me')
@@ -201,9 +204,9 @@ describe('PATCH /Todos/:id',()=>{
             })
             .end(done)
         })
-    })
+})
 
-    describe('POST /users',()=>{
+describe('POST /users',()=>{
         it('should create a user',(done)=>{
             let email = 'example@gmail.com'
             let password = 'password'
@@ -251,8 +254,9 @@ describe('PATCH /Todos/:id',()=>{
             .end(done)
 
         })
-    })
-    describe('POST /users/login',()=>{
+})
+    
+describe('POST /users/login',()=>{
         it('should login user and return auth token',(done)=>{
             let email = users[1].email, password = users[1].password 
             request(app)
@@ -262,8 +266,8 @@ describe('PATCH /Todos/:id',()=>{
             .expect((res)=>{
                 expect(res.header['x-auth']).toExist()
             })
-            .end((err)=>{
-                !err? done(err):
+            .end((err,res)=>{
+                err? done(err):
                     User.findById(users[1]._id).then((user)=>{
                         expect(user).toInclude({email})
                         expect(user.tokens[0]).toInclude({
@@ -284,16 +288,28 @@ describe('PATCH /Todos/:id',()=>{
                     expect(res.header['x-auth']).toNotExist()
                 })
                 .end((err) => {
-                    !err ? done(err) :
+                    err ? done(err) :
                         User.findById(users[1]._id).then((user) => {
-                            expect(user).toNotInclude({ email })
-                            expect(user.tokens[0]).toNotInclude({
-                                access: 'auth',
-                                token: res.header['x-auth']
-                            })
+                            expect(user.tokens.length).toBe(0)
                             done()
                         }).catch((e) => done(e))
                 })
         })
+})
+    
+describe('DELETE /users/me/token',()=>{
+    it('should remove auth token a token',(done)=>{
+        request(app)
+        .delete('/users/me/token')
+        .set('x-auth', users[0].tokens[0].token)
+        .expect(200)
+        .end((err)=>{
+            err ? done(err):
+                User.findById(users[0]._id).then((user) => {
+                    expect(user.tokens.length).toBe(0)
+                    done()
+                }).catch((e) => done(e))
+        })
     })
+
 })
