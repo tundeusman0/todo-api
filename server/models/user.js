@@ -46,9 +46,27 @@ UserSchema.methods.generateAuthToken = function () {
     let user = this
     let access = 'auth'
     let token = jwt.sign({_id:user._id.toHexString(),access},'123abc').toString()
-    user.tokens.push({access,token})
-    return user.save().then(()=>token)
+    // let ind = user.tokens.findIndex(x => x.token)
+    // user.tokens[ind].token !== token &&
+    user.tokens.push({access,token});
+    return user.save().then(()=>{return token})
 }
+
+UserSchema.methods.removeToken = function (token) {
+    let user = this;
+    try{
+        user
+    }catch(e){
+        return Promise.reject()
+    }
+        return user.update({
+            $pull: {
+                tokens: { token }
+            }
+        }); 
+    
+}
+
 UserSchema.statics.findByToken = function (token) {
     let User = this;
     let decorded;
