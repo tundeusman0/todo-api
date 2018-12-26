@@ -54,12 +54,8 @@ UserSchema.methods.generateAuthToken = function () {
 
 UserSchema.methods.removeToken = function (token) {
     let user = this;
-    try{
-        user
-    }catch(e){
-        return Promise.reject()
-    }
-        return user.updateOne({
+    return !user ? Promise.reject() :
+            user.updateOne({
             $pull: {
                 tokens: { token }
             }
